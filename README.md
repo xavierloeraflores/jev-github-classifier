@@ -56,3 +56,10 @@ jobs:
 Open an issue to try it. The workflow adds the suggested label and preserves existing labels. See the run in your repository's **Actions** tab.
 
 For custom labels, include a `labels` object mapping label names to descriptions in the JSON body, for example `JSON.stringify({ title, body, labels: { bug: "Broken behavior", enhancement: "New functionality" } })`.
+
+Complete workflow examples:
+
+- [Standard labels](examples/classify-issues.yml)
+- [Custom labels](examples/classify-issues-custom-labels.yml), with editable label names and descriptions.
+
+Copy one example into `.github/workflows/classify-issues.yml`. Both use the setup above.

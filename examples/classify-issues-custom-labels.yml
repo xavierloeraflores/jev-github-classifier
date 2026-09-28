@@ -1,0 +1,45 @@
+name: Classify issues with custom labels
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        with:
+          script: |
+            const { title, body } = context.payload.issue;
+            // Edit these names and descriptions to match your repository.
+            const labels = {
+              "type: bug": "Existing behavior is broken or differs from expectations.",
+              "type: feature": "A request for new functionality or an improvement.",
+              "type: docs": "Missing, incorrect, or unclear documentation.",
+              "type: question": "A usage question or an issue needing more information.",
+            };
+            const response = await fetch(process.env.CLASSIFIER_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+              },
+              body: JSON.stringify({ title, body, labels }),
+              signal: AbortSignal.timeout(60000),
+            });
+            if (!response.ok) {
+              throw new Error(`Classifier returned HTTP ${response.status}`);
+            }
+            const { classification } = await response.json();
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: context.issue.number,
+              labels: [classification],
+            });
