@@ -14,8 +14,8 @@ jobs:
     steps:
       - uses: actions/github-script@v8
         env:
-          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          LABELER_URL: ${{ vars.LABELER_URL }}
+          LABELER_API_KEY: ${{ secrets.LABELER_API_KEY }}
         with:
           script: |
             const { title, body } = context.payload.pull_request;
@@ -26,12 +26,12 @@ jobs:
               "type: docs": "Adds or improves documentation.",
               "type: question": "A pull request asking a question or needing more information to understand its intent.",
             };
-            const classifierUrl = new URL("/api/classify-pr", process.env.CLASSIFIER_URL);
+            const classifierUrl = new URL("/api/classify-pr", process.env.LABELER_URL);
             const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.LABELER_API_KEY}`,
               },
               body: JSON.stringify({ title, body, labels }),
               signal: AbortSignal.timeout(60000),

@@ -47,9 +47,9 @@ export function SetupGuide({ issues, prs }: Props) {
         <p className="eyebrow">01 / Connect</p>
         <h2 id="setup-title">Set up your repository</h2>
         <ol className="steps">
-          <li><h3>Deploy the API</h3><p>Use the deploy button above. Set <code>API_SECRET_KEY</code> in the deployment environment to a secret of your choice. The API uses Vercel AI Gateway with Vercel OIDC, or an <code>AI_GATEWAY_API_KEY</code> you configure.</p></li>
+          <li><h3>Deploy the API</h3><p>Use the deploy button above. Set <code>LABELER_API_KEY</code> in the deployment environment to a secret of your choice. The API uses Vercel AI Gateway with Vercel OIDC, or an <code>AI_GATEWAY_API_KEY</code> you configure.</p></li>
           <li><h3>Add your Actions configuration</h3><p>In the repository you want to label, open <strong>Settings → Secrets and variables → Actions</strong>.</p>
-            <div className="settings"><p><span>Variable</span><code>CLASSIFIER_URL</code>Your deployment base URL, such as <code>https://your-app.vercel.app</code>, without <code>{endpoint}</code>.</p><p><span>Secret</span><code>API_SECRET_KEY</code>The same secret you set in your deployment.</p></div>
+            <div className="settings"><p><span>Variable</span><code>LABELER_URL</code>Your deployment base URL, such as <code>https://your-app.vercel.app</code>, without <code>{endpoint}</code>.</p><p><span>Secret</span><code>LABELER_API_KEY</code>The same secret you set in your deployment.</p></div>
           </li>
           <li><h3>Add the workflow</h3><p>Copy an example below into <code>{`.github/workflows/${filename}.yml`}</code> and commit it to your default branch.</p></li>
         </ol>
