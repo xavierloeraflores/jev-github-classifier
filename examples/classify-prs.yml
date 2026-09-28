@@ -1,0 +1,40 @@
+name: Classify pull requests
+
+on:
+  # Reads PR metadata only. Do not check out or execute code from the PR.
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        with:
+          script: |
+            const { title, body } = context.payload.pull_request;
+            const classifierUrl = new URL("/api/classify-pr", process.env.CLASSIFIER_URL);
+            const response = await fetch(classifierUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+              },
+              body: JSON.stringify({ title, body }),
+              signal: AbortSignal.timeout(60000),
+            });
+            if (!response.ok) {
+              throw new Error(`Classifier returned HTTP ${response.status}`);
+            }
+            const { classification } = await response.json();
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [classification],
+            });
