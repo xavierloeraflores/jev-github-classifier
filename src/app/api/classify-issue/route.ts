@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { experimental_evaluate as evaluate } from "ai";
 import { gateway } from "@/lib/ai";
 import { handleClassifyIssue, type Classification } from "@/lib/classify-issue-handler";
@@ -18,6 +19,18 @@ const criteria = {
 } satisfies Record<Classification, string>;
 
 export async function POST(request: Request) {
+  const secretKey = process.env.API_SECRET_KEY;
+  if (secretKey) {
+    const expected = Buffer.from(`Bearer ${secretKey}`);
+    const provided = Buffer.from(request.headers.get("authorization") ?? "");
+    if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+      return Response.json(
+        { error: "Unauthorized." },
+        { status: 401, headers: { "WWW-Authenticate": "Bearer" } },
+      );
+    }
+  }
+
   return handleClassifyIssue(request, {
     classify: async (issue) => {
       const { answers } = await evaluate({
