@@ -9,7 +9,7 @@ A Next.js API that classifies GitHub issues using the Jev model through Vercel A
 Automatically label new issues in your repository:
 
 1. Deploy this API using the button above. Set `API_SECRET_KEY` in the deployment environment to a secret of your choice.
-2. In your target repository's **Settings → Secrets and variables → Actions**, add a variable named `CLASSIFIER_URL` with your base URL, such as `https://your-app.vercel.app`, or the full endpoint URL, `https://your-app.vercel.app/api/classify-issue`, and a secret named `API_SECRET_KEY` matching your deployment.
+2. In your target repository's **Settings → Secrets and variables → Actions**, add a variable named `CLASSIFIER_URL` with your deployment base URL, such as `https://your-app.vercel.app` (without `/api/classify-issue`), and a secret named `API_SECRET_KEY` matching your deployment.
 3. Copy this into `.github/workflows/classify-issues.yml` and commit it to your default branch:
 
 ```yaml
@@ -33,10 +33,7 @@ jobs:
         with:
           script: |
             const { title, body } = context.payload.issue;
-            const classifierUrl = new URL(process.env.CLASSIFIER_URL);
-            if (classifierUrl.pathname === "/") {
-              classifierUrl.pathname = "/api/classify-issue";
-            }
+            const classifierUrl = new URL("/api/classify-issue", process.env.CLASSIFIER_URL);
             const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {

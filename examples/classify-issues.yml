@@ -18,10 +18,7 @@ jobs:
         with:
           script: |
             const { title, body } = context.payload.issue;
-            const classifierUrl = new URL(process.env.CLASSIFIER_URL);
-            if (classifierUrl.pathname === "/") {
-              classifierUrl.pathname = "/api/classify-issue";
-            }
+            const classifierUrl = new URL("/api/classify-issue", process.env.CLASSIFIER_URL);
             const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {
