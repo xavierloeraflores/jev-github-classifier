@@ -30,7 +30,7 @@ jobs:
               signal: AbortSignal.timeout(60000),
             });
             if (!response.ok) {
-              throw new Error(`Classifier returned HTTP ${response.status}`);
+              throw new Error(`Labeler returned HTTP ${response.status}`);
             }
             const { classification } = await response.json();
             await github.rest.issues.addLabels({
