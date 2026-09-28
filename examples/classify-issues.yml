@@ -1,0 +1,38 @@
+name: Classify issues
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        with:
+          script: |
+            const { title, body } = context.payload.issue;
+            const response = await fetch(process.env.CLASSIFIER_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+              },
+              body: JSON.stringify({ title, body }),
+              signal: AbortSignal.timeout(60000),
+            });
+            if (!response.ok) {
+              throw new Error(`Classifier returned HTTP ${response.status}`);
+            }
+            const { classification } = await response.json();
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: context.issue.number,
+              labels: [classification],
+            });

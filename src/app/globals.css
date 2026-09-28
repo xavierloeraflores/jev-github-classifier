@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+:root { color-scheme: light; }
+body { margin: 0; background: #faf9f6; color: #242621; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.65; }
+.docs { max-width: 880px; margin: auto; padding: 0 28px; }
+a { text-underline-offset: 4px; }
+a:hover { text-decoration: underline; }
+.site-header { display: flex; justify-content: space-between; gap: 20px; padding: 27px 0; border-bottom: 1px solid #dddfd7; font-size: 14px; }
+.wordmark { font-weight: 700; letter-spacing: -.02em; }
+.intro { padding: 78px 0 64px; }
+.eyebrow { color: #56704a; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: clamp(40px, 7vw, 64px); line-height: 1.08; letter-spacing: -.055em; font-weight: 600; margin: 0 0 24px; }
+.lede { max-width: 620px; font-size: 18px; color: #62665b; }
+.intro-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 30px; font-size: 14px; }
+.primary-link { background: #283e26; color: white; padding: 11px 19px; border-radius: 6px; }
+.doc-section { border-top: 1px solid #dddfd7; padding: 36px 0 42px; scroll-margin-top: 24px; }
+h2 { font-size: 28px; line-height: 1.25; letter-spacing: -.03em; font-weight: 600; margin-bottom: 18px; }
+h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+p { margin: 0 0 16px; }
+p code { font-size: .86em; background: #eeeee7; border-radius: 3px; padding: 2px 5px; overflow-wrap: anywhere; }
+.steps { list-style: decimal; padding-left: 24px; }
+.steps li { padding-left: 10px; margin-top: 24px; }
+.steps li::marker { color: #56704a; font-weight: 600; }
+.settings { border: 1px solid #dddfd7; border-radius: 6px; padding: 0 18px; margin-top: 18px; background: #fffefa; }
+.settings p { margin: 0; padding: 16px 0; font-size: 14px; }
+.settings p + p { border-top: 1px solid #dddfd7; }
+.settings span { display: block; color: #72766b; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+.settings p > code:first-of-type { display: block; width: fit-content; margin: 5px 0 7px; font-weight: 600; }
+.workflow { margin: 24px 0 16px; background: #20261f; color: #e2e8dc; border-radius: 8px; overflow: hidden; }
+.workflow-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #42483c; }
+select, button { font: inherit; font-size: 13px; border: 1px solid #646f5b; border-radius: 4px; padding: 7px 10px; background: #30392c; color: #f4f6ef; }
+button { cursor: pointer; }
+button:hover { background: #46523f; }
+:focus-visible { outline: 2px solid #87aa68; outline-offset: 4px; }
+.copy-status { font-size: 12px; padding: 0 20px; margin: 0; }
+.copy-status:not(:empty) { padding-top: 12px; }
+pre { font-size: 12px; line-height: 1.8; overflow-x: auto; padding: 22px; }
+.workflow pre { max-height: 520px; }
+.example-links { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #56704a; }
+.small-code { background: #eeeee7; border: 1px solid #dddfd7; border-radius: 6px; }
+footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; border-top: 1px solid #dddfd7; color: #72766b; font-size: 12px; padding: 24px 0 36px; }
+@media (max-width: 480px) { .docs { padding: 0 20px; } .intro { padding: 48px 0; } .workflow-toolbar { padding: 12px; gap: 8px; } select, button { padding: 7px; font-size: 12px; } h2 { font-size: 25px; } }
