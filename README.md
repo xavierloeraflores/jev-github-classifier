@@ -2,7 +2,7 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fxavierloeraflores%2Fjev-issue-classifier)
 
-A Next.js API that classifies GitHub issues using the Jev model through Vercel AI Gateway. Send an issue title and optional body to `POST /api/classify-issue` to receive a suggested GitHub label such as `bug`, `enhancement`, or `documentation`.
+A Next.js API that classifies GitHub issues and pull requests using the Jev model through Vercel AI Gateway. Send a title and optional body to `POST /api/classify-issue` for issues or `POST /api/classify-pr` for pull requests to receive a suggested GitHub label such as `bug`, `enhancement`, or `documentation`.
 
 ## Use with GitHub Actions
 
@@ -64,3 +64,59 @@ Complete workflow examples:
 - [Custom labels](examples/classify-issues-custom-labels.yml), with editable label names and descriptions.
 
 Copy one example into `.github/workflows/classify-issues.yml`. Both use the setup above.
+
+## Classify pull requests with GitHub Actions
+
+Use the same deployment, `CLASSIFIER_URL` variable, and `API_SECRET_KEY` secret configured above. Copy this into `.github/workflows/classify-prs.yml` and commit it to your default branch:
+
+```yaml
+name: Classify pull requests
+
+on:
+  # Reads PR metadata only. Do not check out or execute code from the PR.
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        with:
+          script: |
+            const { title, body } = context.payload.pull_request;
+            const classifierUrl = new URL("/api/classify-pr", process.env.CLASSIFIER_URL);
+            const response = await fetch(classifierUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+              },
+              body: JSON.stringify({ title, body }),
+              signal: AbortSignal.timeout(60000),
+            });
+            if (!response.ok) {
+              throw new Error(`Classifier returned HTTP ${response.status}`);
+            }
+            const { classification } = await response.json();
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: [classification],
+            });
+```
+
+Open a pull request to try it. The workflow sends its title and body to `/api/classify-pr`, adds the suggested label, and preserves existing labels. See the run in your repository's **Actions** tab.
+
+Complete PR workflow examples:
+
+- [Standard labels](examples/classify-prs.yml)
+- [Custom labels](examples/classify-prs-custom-labels.yml), with editable label names and descriptions.
+
+Copy one example into `.github/workflows/classify-prs.yml`. Both use the setup above.
