@@ -25,7 +25,8 @@ jobs:
               "type: docs": "Missing, incorrect, or unclear documentation.",
               "type: question": "A usage question or an issue needing more information.",
             };
-            const response = await fetch(process.env.CLASSIFIER_URL, {
+            const classifierUrl = new URL("/api/classify-issue", process.env.CLASSIFIER_URL);
+            const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
