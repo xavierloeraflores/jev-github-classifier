@@ -14,6 +14,14 @@ h1 { font-size: clamp(40px, 7vw, 64px); line-height: 1.08; letter-spacing: -.055
 .intro-links { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 30px; font-size: 14px; }
 .primary-link { background: #283e26; color: white; padding: 11px 19px; border-radius: 6px; }
 .doc-section { border-top: 1px solid #dddfd7; padding: 36px 0 42px; scroll-margin-top: 24px; }
+.instruction-switch { border: 0; padding: 0; margin: 0 0 32px; }
+.instruction-switch legend { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.instruction-options { display: flex; gap: 8px; }
+.instruction-options label { position: relative; cursor: pointer; }
+.instruction-options input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.instruction-options span { display: block; border: 1px solid #dddfd7; border-radius: 6px; padding: 9px 18px; font-size: 14px; background: #fffefa; }
+.instruction-options input:checked + span { background: #283e26; color: white; border-color: #283e26; }
+.instruction-options input:focus-visible + span { outline: 2px solid #87aa68; outline-offset: 4px; }
 h2 { font-size: 28px; line-height: 1.25; letter-spacing: -.03em; font-weight: 600; margin-bottom: 18px; }
 h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
 p { margin: 0 0 16px; }

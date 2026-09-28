@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JEV Issue Classifier",
+  title: "JEV GitHub Classifier",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
