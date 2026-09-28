@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
-  const secretKey = process.env.API_SECRET_KEY;
+  const secretKey = process.env.LABELER_API_KEY;
   if (secretKey) {
     const expected = Buffer.from(`Bearer ${secretKey}`);
     const provided = Buffer.from(request.headers.get("authorization") ?? "");

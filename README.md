@@ -1,15 +1,15 @@
-# jev-issue-classifier
+# Jev GitHub Labeler
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fxavierloeraflores%2Fjev-issue-classifier)
 
-A Next.js API that classifies GitHub issues and pull requests using the Jev model through Vercel AI Gateway. Send a title and optional body to `POST /api/classify-issue` for issues or `POST /api/classify-pr` for pull requests to receive a suggested GitHub label such as `bug`, `enhancement`, or `documentation`.
+Jev GitHub Labeler is a self-hosted Next.js API that classifies GitHub issues and pull requests using the Jev model through Vercel AI Gateway. Send a title and optional body to `POST /api/classify-issue` for issues or `POST /api/classify-pr` for pull requests to receive a suggested GitHub label such as `bug`, `enhancement`, or `documentation`.
 
 ## Use with GitHub Actions
 
 Automatically label new issues in your repository:
 
-1. Deploy this API using the button above. Set `API_SECRET_KEY` in the deployment environment to a secret of your choice.
-2. In your target repository's **Settings → Secrets and variables → Actions**, add a variable named `CLASSIFIER_URL` with your deployment base URL, such as `https://your-app.vercel.app` (without `/api/classify-issue`), and a secret named `API_SECRET_KEY` matching your deployment.
+1. Deploy this API using the button above. Set `LABELER_API_KEY` in the deployment environment to a secret of your choice.
+2. In your target repository's **Settings → Secrets and variables → Actions**, add a variable named `LABELER_URL` with your deployment base URL, such as `https://your-app.vercel.app` (without `/api/classify-issue`), and a secret named `LABELER_API_KEY` matching your deployment.
 3. Copy this into `.github/workflows/classify-issues.yml` and commit it to your default branch:
 
 ```yaml
@@ -28,23 +28,23 @@ jobs:
     steps:
       - uses: actions/github-script@v8
         env:
-          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          LABELER_URL: ${{ vars.LABELER_URL }}
+          LABELER_API_KEY: ${{ secrets.LABELER_API_KEY }}
         with:
           script: |
             const { title, body } = context.payload.issue;
-            const classifierUrl = new URL("/api/classify-issue", process.env.CLASSIFIER_URL);
+            const classifierUrl = new URL("/api/classify-issue", process.env.LABELER_URL);
             const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.LABELER_API_KEY}`,
               },
               body: JSON.stringify({ title, body }),
               signal: AbortSignal.timeout(60000),
             });
             if (!response.ok) {
-              throw new Error(`Classifier returned HTTP ${response.status}`);
+              throw new Error(`Labeler returned HTTP ${response.status}`);
             }
             const { classification } = await response.json();
             await github.rest.issues.addLabels({
@@ -67,7 +67,7 @@ Copy one example into `.github/workflows/classify-issues.yml`. Both use the setu
 
 ## Classify pull requests with GitHub Actions
 
-Use the same deployment, `CLASSIFIER_URL` variable, and `API_SECRET_KEY` secret configured above. Copy this into `.github/workflows/classify-prs.yml` and commit it to your default branch:
+Use the same deployment, `LABELER_URL` variable, and `LABELER_API_KEY` secret configured above. Copy this into `.github/workflows/classify-prs.yml` and commit it to your default branch:
 
 ```yaml
 name: Classify pull requests
@@ -86,23 +86,23 @@ jobs:
     steps:
       - uses: actions/github-script@v8
         env:
-          CLASSIFIER_URL: ${{ vars.CLASSIFIER_URL }}
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          LABELER_URL: ${{ vars.LABELER_URL }}
+          LABELER_API_KEY: ${{ secrets.LABELER_API_KEY }}
         with:
           script: |
             const { title, body } = context.payload.pull_request;
-            const classifierUrl = new URL("/api/classify-pr", process.env.CLASSIFIER_URL);
+            const classifierUrl = new URL("/api/classify-pr", process.env.LABELER_URL);
             const response = await fetch(classifierUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.API_SECRET_KEY}`,
+                Authorization: `Bearer ${process.env.LABELER_API_KEY}`,
               },
               body: JSON.stringify({ title, body }),
               signal: AbortSignal.timeout(60000),
             });
             if (!response.ok) {
-              throw new Error(`Classifier returned HTTP ${response.status}`);
+              throw new Error(`Labeler returned HTTP ${response.status}`);
             }
             const { classification } = await response.json();
             await github.rest.issues.addLabels({
